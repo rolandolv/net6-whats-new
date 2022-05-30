@@ -1,9 +1,11 @@
-﻿using csharp10_whats_new.HotReload;
+﻿using csharp10_whats_new.HotReload; // Leaving this as an example of global using statement
 using csharp10_whats_new.InterpolatedStringHandler;
 using csharp10_whats_new.PropertyPatterns;
+using csharp10_whats_new.Record;
 using csharp10_whats_new.RecordStruct;
 using System.Linq.Expressions;
 
+Console.ForegroundColor = ConsoleColor.Red;
 
 #region Record Struct
 
@@ -56,6 +58,8 @@ Console.WriteLine();
 
 #endregion
 
+Console.ForegroundColor = ConsoleColor.Yellow;
+
 #region InterpolatedStringHandler
 
 Console.WriteLine("----------------------------------------------");
@@ -76,6 +80,8 @@ Console.WriteLine();
 logger.LogMessage(LogLevel.Warning, "Warning Level. This warning is a string, not an interpolated string expression.");
 Console.WriteLine();
 #endregion
+
+Console.ForegroundColor = ConsoleColor.White;
 
 #region Extended Property Patterns
 
@@ -111,6 +117,8 @@ if (salesPerson is SalesPerson { SalesCoordinator.Name: "Arbiter" } salesPersonW
 }
 
 #endregion
+
+Console.ForegroundColor = ConsoleColor.Green;
 
 #region Lambda Improvements
 
@@ -170,6 +178,68 @@ Console.WriteLine(choose);
 Console.WriteLine();
 
 #endregion
+
+Console.ForegroundColor = ConsoleColor.Red;
+
+#region Constant interpolated strings
+
+Console.WriteLine("----------------------------------------------");
+Console.WriteLine("Constant interpolated strings");
+Console.WriteLine("----------------------------------------------");
+Console.WriteLine();
+
+const string Language = "C#";
+const string Platform = ".NET";
+const string Version = "10.0";
+const string FullProductName = $"{Platform} - Language: {Language} Version: {Version}";
+
+Console.WriteLine(FullProductName);
+Console.WriteLine();
+
+#endregion
+
+Console.ForegroundColor = ConsoleColor.Yellow;
+
+#region Record types can seal ToString
+
+Console.WriteLine("----------------------------------------------");
+Console.WriteLine("Record types can seal ToString");
+Console.WriteLine("----------------------------------------------");
+Console.WriteLine();
+
+var dog = new GoldenRetriever
+{
+    Name = "Happy",
+    Category = "Large dogs"
+};
+
+Console.WriteLine(dog);
+Console.WriteLine();
+
+#endregion
+
+Console.ForegroundColor = ConsoleColor.White;
+
+#region Deconstruction - assignment & declaration
+
+Console.WriteLine("----------------------------------------------");
+Console.WriteLine("Deconstruction - assignment & declaration");
+Console.WriteLine("----------------------------------------------");
+Console.WriteLine();
+
+var person = new Person("Cortana", 8);
+
+// In case you already have a variable you want to assign in the deconstruction
+int newAge;
+(var name, newAge) = person;
+
+Console.WriteLine(name);
+Console.WriteLine(person.Age);
+Console.WriteLine();
+
+#endregion
+
+Console.ForegroundColor = ConsoleColor.Green;
 
 #region HotReload
 

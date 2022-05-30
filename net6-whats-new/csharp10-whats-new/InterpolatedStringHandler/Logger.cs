@@ -1,62 +1,61 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace csharp10_whats_new.InterpolatedStringHandler
+namespace csharp10_whats_new.InterpolatedStringHandler;
+
+public enum LogLevel
 {
-    public enum LogLevel
+    Off,
+    Critical,
+    Error,
+    Warning,
+    Information,
+    Trace
+}
+
+public class Logger
+{
+    public LogLevel EnabledLevel { get; init; } = LogLevel.Error;
+
+    public void LogMessage(LogLevel level, string msg)
     {
-        Off,
-        Critical,
-        Error,
-        Warning,
-        Information,
-        Trace
+        if (EnabledLevel < level) return;
+        Console.WriteLine(msg);
     }
 
-    public class Logger
+    public void LogMessage(LogLevel level, [InterpolatedStringHandlerArgument("", "level")] LogInterpolatedStringHandler builder)
     {
-        public LogLevel EnabledLevel { get; init; } = LogLevel.Error;
+        if (EnabledLevel < level) return;
+        Console.WriteLine(builder.GetFormattedText());
+    }
+}
 
-        public void LogMessage(LogLevel level, string msg)
-        {
-            if (EnabledLevel < level) return;
-            Console.WriteLine(msg);
-        }
+[InterpolatedStringHandler]
+public ref struct LogInterpolatedStringHandler
+{
+    // Storage for the built-up string
+    StringBuilder builder;
 
-        public void LogMessage(LogLevel level, [InterpolatedStringHandlerArgument("", "level")] LogInterpolatedStringHandler builder)
-        {
-            if (EnabledLevel < level) return;
-            Console.WriteLine(builder.GetFormattedText());
-        }
+    public LogInterpolatedStringHandler(int literalLength, int formattedCount, Logger logger, LogLevel level, out bool isEnabled)
+    {
+        isEnabled = logger.EnabledLevel >= level;
+        Console.WriteLine($"\tliteral length: {literalLength}, formattedCount: {formattedCount}");
+        builder = isEnabled ? new StringBuilder(literalLength) : default!;
     }
 
-    [InterpolatedStringHandler]
-    public ref struct LogInterpolatedStringHandler
+    public void AppendLiteral(string s)
     {
-        // Storage for the built-up string
-        StringBuilder builder;
-
-        public LogInterpolatedStringHandler(int literalLength, int formattedCount, Logger logger, LogLevel level, out bool isEnabled)
-        {
-            isEnabled = logger.EnabledLevel >= level;
-            Console.WriteLine($"\tliteral length: {literalLength}, formattedCount: {formattedCount}");
-            builder = isEnabled ? new StringBuilder(literalLength) : default!;
-        }
-
-        public void AppendLiteral(string s)
-        {
-            Console.WriteLine($"\tAppendLiteral called: {{{s}}}");
-            builder.Append(s);
-            Console.WriteLine($"\tAppended the literal string");
-        }
-
-        public void AppendFormatted<T>(T t, string format) where T : IFormattable
-        {
-            Console.WriteLine($"\tAppendFormatted (IFormattable version) called: {t} with format {{{format}}} is of type {typeof(T)},");
-            builder.Append(t?.ToString(format, null));
-            Console.WriteLine($"\tAppended the formatted object");
-        }
-
-        internal string GetFormattedText() => builder.ToString();
+        Console.WriteLine($"\tAppendLiteral called: {{{s}}}");
+        builder.Append(s);
+        Console.WriteLine($"\tAppended the literal string");
     }
+
+    public void AppendFormatted<T>(T t, string format) where T : IFormattable
+    {
+        Console.WriteLine($"\tAppendFormatted (IFormattable version) called: {t} with format {{{format}}} is of type {typeof(T)},");
+        builder.Append(t?.ToString(format, null));
+        Console.WriteLine($"\tAppended the formatted object");
+    }
+
+    internal string GetFormattedText() => builder.ToString();
 }
